@@ -151,11 +151,14 @@ class ExperimentBuilder(nn.Module):
 
         for name, param in named_parameters:
             if param.requires_grad and param.grad is not None:
-                layers.append(name)  
-                all_grads.append(param.grad.abs().mean().item())  
-       
+                if not name.endswith("bias"): 
+                    short_name = name.replace("layer_dict.", "").replace(".weight", "")
+                    layers.append(short_name)  
+                    all_grads.append(param.grad.abs().mean().item())  
+
         plt = self.plot_func_def(all_grads, layers)  
         return plt
+
     
     
     
