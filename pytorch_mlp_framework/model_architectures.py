@@ -350,21 +350,34 @@ class BatchNormProcessingBlock(nn.Module):
         self.build_module()
 
     def build_module(self):
-        self.layer_dict = nn.ModuleDict()
-        x = torch.zeros(self.input_shape)
+self.layer_dict = nn.ModuleDict()
+        x = torch.zeros(self.input_shape)  
         out = x
-
-        # Convolution 1 + BatchNorm + Leaky ReLU
-        self.layer_dict['conv_0'] = nn.Conv2d(in_channels=out.shape[1], out_channels=self.num_filters,
-                                              kernel_size=self.kernel_size, dilation=self.dilation,
-                                              padding=self.padding, bias=self.bias)
+        self.layer_dict['conv_0'] = nn.Conv2d(
+            in_channels=out.shape[1],
+            out_channels=self.num_filters,
+            kernel_size=self.kernel_size,
+            dilation=self.dilation,
+            padding=self.padding,
+            bias=self.bias
+        )
+        out = self.layer_dict['conv_0'](out) 
         self.layer_dict['bn_0'] = nn.BatchNorm2d(num_features=self.num_filters)
+        out = self.layer_dict['bn_0'](out) 
+        out = F.leaky_relu(out)  
 
-        # Convolution 2 + BatchNorm + Leaky ReLU
-        self.layer_dict['conv_1'] = nn.Conv2d(in_channels=self.num_filters, out_channels=self.num_filters,
-                                              kernel_size=self.kernel_size, dilation=self.dilation,
-                                              padding=self.padding, bias=self.bias)
+        self.layer_dict['conv_1'] = nn.Conv2d(
+            in_channels=self.num_filters,
+            out_channels=self.num_filters,
+            kernel_size=self.kernel_size,
+            dilation=self.dilation,
+            padding=self.padding,
+            bias=self.bias
+        )
+        out = self.layer_dict['conv_1'](out) 
         self.layer_dict['bn_1'] = nn.BatchNorm2d(num_features=self.num_filters)
+        out = self.layer_dict['bn_1'](out) 
+        out = F.leaky_relu(out)  
 
     def forward(self, x):
         out = x
@@ -377,7 +390,7 @@ class BatchNormProcessingBlock(nn.Module):
         out = F.leaky_relu(out)
 
         return out
-        
+
 class ResidualProcessingBlock(nn.Module):
     def __init__(self, input_shape, num_filters, kernel_size, padding, bias, dilation):
         super(ResidualProcessingBlock, self).__init__()
@@ -420,3 +433,6 @@ class ResidualProcessingBlock(nn.Module):
         out = F.leaky_relu(out)
 
         return out
+
+
+
