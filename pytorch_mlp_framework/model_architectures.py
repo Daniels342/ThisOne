@@ -350,7 +350,7 @@ class BatchNormProcessingBlock(nn.Module):
         self.build_module()
 
     def build_module(self):
-self.layer_dict = nn.ModuleDict()
+        self.layer_dict = nn.ModuleDict()
         x = torch.zeros(self.input_shape)  
         out = x
         self.layer_dict['conv_0'] = nn.Conv2d(
